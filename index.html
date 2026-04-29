@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patterns</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+    color: #f5f5f5;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    text-align: center;
+    max-width: 750px;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+.quote-box {
+    background: rgba(255,255,255,0.05);
+    padding: 30px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+.quote {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    min-height: 80px;
+}
+
+.subtext {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin: 15px 0;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #111;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #ddd;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    margin-top: 15px;
+    resize: none;
+}
+
+footer {
+    margin-top: 20px;
+    font-size: 0.8rem;
+    color: #666;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Patterns</h1>
+
+    <div class="quote-box">
+        <div id="quote" class="quote"></div>
+        <div id="subtext" class="subtext"></div>
+
+        <button onclick="nextQuote()">Next →</button>
+
+        <textarea id="userQuote" placeholder="Write your own thought..."></textarea>
+        <button onclick="addQuote()">Add Your Thought</button>
+    </div>
+
+    <footer>Some things repeat until we learn.</footer>
+</div>
+
+<script>
+
+let quotes = [
+{
+text: "The worst déjà vu isn’t a moment—it’s people. I give my best every time… and they still get bored in the end.",
+sub: "— when effort isn’t valued, patterns repeat"
+},
+{
+text: "Sometimes people don’t say they’re bored of you… they just start choosing others over you.",
+sub: "— silence can say everything"
+},
+{
+text: "When your presence isn’t valued, they won’t say it… they’ll just distance themselves quietly.",
+sub: "— absence reveals truth"
+},
+{
+text: "Not everything that feels familiar is safe… sometimes it’s just the same pain repeating.",
+sub: "— patterns disguise themselves"
+},
+{
+text: "I stopped expecting consistency from people who only show up when it’s convenient.",
+sub: "— effort reveals intention"
+}
+];
+
+// Load saved quotes
+if(localStorage.getItem("userQuotes")){
+    quotes = quotes.concat(JSON.parse(localStorage.getItem("userQuotes")));
+}
+
+let index = 0;
+
+// Typing Animation
+function typeText(text, element, speed = 30) {
+    element.innerHTML = "";
+    let i = 0;
+
+    function typing() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        }
+    }
+
+    typing();
+}
+
+function showQuote(i) {
+    const quoteEl = document.getElementById("quote");
+    const subEl = document.getElementById("subtext");
+
+    typeText(quotes[i].text, quoteEl);
+    subEl.innerText = quotes[i].sub;
+}
+
+function nextQuote() {
+    index = (index + 1) % quotes.length;
+    showQuote(index);
+}
+
+// Add user quote
+function addQuote() {
+    const input = document.getElementById("userQuote").value.trim();
+
+    if(input === "") return;
+
+    const newQuote = {
+        text: input,
+        sub: "— user thought"
+    };
+
+    let userQuotes = JSON.parse(localStorage.getItem("userQuotes")) || [];
+    userQuotes.push(newQuote);
+    localStorage.setItem("userQuotes", JSON.stringify(userQuotes));
+
+    quotes.push(newQuote);
+
+    document.getElementById("userQuote").value = "";
+    alert("Added successfully!");
+}
+
+// Initial load
+showQuote(index);
+
+</script>
+
+</body>
+</html>
