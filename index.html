@@ -14,100 +14,136 @@
 }
 
 body {
-    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-    color: #f5f5f5;
+    background: #0f0f0f;
+    color: #fff;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* PARTICLE CANVAS */
+#particles {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* CENTER CONTAINER */
+.container {
+    position: relative;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.container {
-    text-align: center;
-    max-width: 750px;
-    padding: 20px;
-}
-
-h1 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-    letter-spacing: 2px;
-    opacity: 0.8;
-}
-
-.quote-box {
+/* GLASS CARD */
+.card {
     background: rgba(255,255,255,0.05);
-    padding: 30px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    border-radius: 20px;
+    padding: 40px;
+    width: 90%;
+    max-width: 700px;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 40px rgba(255,255,255,0.05);
+    text-align: center;
+    animation: float 6s ease-in-out infinite;
 }
 
+/* FLOAT ANIMATION */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+/* TITLE */
+h1 {
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* QUOTE */
 .quote {
     font-size: 1.3rem;
     line-height: 1.6;
     min-height: 80px;
 }
 
+/* SUBTEXT */
 .subtext {
     font-size: 0.9rem;
     color: #aaa;
     margin: 15px 0;
 }
 
+/* BUTTON */
 button {
-    margin: 5px;
     padding: 10px 20px;
+    margin: 5px;
     border: none;
-    border-radius: 20px;
-    background: #ffffff;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #fff, #bbb);
     color: #111;
-    cursor: pointer;
     font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
 button:hover {
-    background: #ddd;
+    transform: scale(1.1);
 }
 
+/* INPUT */
 textarea {
     width: 100%;
+    margin-top: 15px;
     padding: 10px;
     border-radius: 10px;
     border: none;
-    margin-top: 15px;
     resize: none;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
 }
 
-footer {
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: #666;
+/* GLOW EFFECT */
+.card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: 20px;
+    background: linear-gradient(45deg, #00f2ff, #ff00ff, #00ff88);
+    filter: blur(20px);
+    opacity: 0.2;
+    z-index: -1;
 }
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
-    <h1>Patterns</h1>
+<canvas id="particles"></canvas>
 
-    <div class="quote-box">
+<div class="container">
+    <div class="card">
+        <h1>Patterns</h1>
+
         <div id="quote" class="quote"></div>
         <div id="subtext" class="subtext"></div>
 
         <button onclick="nextQuote()">Next →</button>
 
-        <textarea id="userQuote" placeholder="Write your own thought..."></textarea>
-        <button onclick="addQuote()">Add Your Thought</button>
+        <textarea id="userQuote" placeholder="Write your thought..."></textarea>
+        <button onclick="addQuote()">Add Thought</button>
     </div>
-
-    <footer>Some things repeat until we learn.</footer>
 </div>
 
 <script>
-
+// QUOTES
 let quotes = [
 {
 text: "The worst déjà vu isn’t a moment—it’s people. I give my best every time… and they still get bored in the end.",
@@ -115,30 +151,26 @@ sub: "— when effort isn’t valued, patterns repeat"
 },
 {
 text: "Sometimes people don’t say they’re bored of you… they just start choosing others over you.",
-sub: "— silence can say everything"
+sub: "— silence speaks"
 },
 {
-text: "When your presence isn’t valued, they won’t say it… they’ll just distance themselves quietly.",
+text: "When your presence isn’t valued, they won’t say it… they’ll just drift away quietly.",
 sub: "— absence reveals truth"
 },
 {
-text: "Not everything that feels familiar is safe… sometimes it’s just the same pain repeating.",
-sub: "— patterns disguise themselves"
-},
-{
-text: "I stopped expecting consistency from people who only show up when it’s convenient.",
-sub: "— effort reveals intention"
+text: "They won’t tell you they’re bored… they’ll just put in their earbuds or choose someone else over you.",
+sub: "— distance without words"
 }
 ];
 
-// Load saved quotes
+// LOAD USER QUOTES
 if(localStorage.getItem("userQuotes")){
     quotes = quotes.concat(JSON.parse(localStorage.getItem("userQuotes")));
 }
 
 let index = 0;
 
-// Typing Animation
+// TYPING EFFECT
 function typeText(text, element, speed = 30) {
     element.innerHTML = "";
     let i = 0;
@@ -150,16 +182,12 @@ function typeText(text, element, speed = 30) {
             setTimeout(typing, speed);
         }
     }
-
     typing();
 }
 
 function showQuote(i) {
-    const quoteEl = document.getElementById("quote");
-    const subEl = document.getElementById("subtext");
-
-    typeText(quotes[i].text, quoteEl);
-    subEl.innerText = quotes[i].sub;
+    typeText(quotes[i].text, document.getElementById("quote"));
+    document.getElementById("subtext").innerText = quotes[i].sub;
 }
 
 function nextQuote() {
@@ -167,30 +195,64 @@ function nextQuote() {
     showQuote(index);
 }
 
-// Add user quote
+// ADD USER QUOTE
 function addQuote() {
     const input = document.getElementById("userQuote").value.trim();
+    if(!input) return;
 
-    if(input === "") return;
-
-    const newQuote = {
-        text: input,
-        sub: "— user thought"
-    };
+    const newQuote = { text: input, sub: "— user thought" };
 
     let userQuotes = JSON.parse(localStorage.getItem("userQuotes")) || [];
     userQuotes.push(newQuote);
     localStorage.setItem("userQuotes", JSON.stringify(userQuotes));
 
     quotes.push(newQuote);
-
     document.getElementById("userQuote").value = "";
-    alert("Added successfully!");
+    alert("Added!");
 }
 
-// Initial load
+// INITIAL LOAD
 showQuote(index);
 
+// PARTICLES
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for(let i=0;i<80;i++){
+    particles.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height,
+        r: Math.random()*2,
+        dx: Math.random()*0.5,
+        dy: Math.random()*0.5
+    });
+}
+
+function animate(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+        ctx.fillStyle="rgba(255,255,255,0.5)";
+        ctx.fill();
+
+        p.x += p.dx;
+        p.y += p.dy;
+
+        if(p.x>canvas.width || p.x<0) p.dx *= -1;
+        if(p.y>canvas.height || p.y<0) p.dy *= -1;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>
