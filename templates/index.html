@@ -1,0 +1,60 @@
+<script>
+
+let quotes = [
+"The worst déjà vu isn’t a moment—it’s people. I give my best every time… and they still get bored in the end.",
+"Sometimes people don’t say they’re bored… they just choose someone else.",
+"They won’t say it… they’ll just distance themselves quietly."
+];
+
+let index = 0;
+
+// FETCH DATABASE QUOTES
+async function loadQuotes() {
+    const res = await fetch('/get_quotes');
+    const data = await res.json();
+    quotes = quotes.concat(data);
+}
+
+// TYPING EFFECT
+function typeText(text, element, speed = 30) {
+    element.innerHTML = "";
+    let i = 0;
+    function typing() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(typing, speed);
+        }
+    }
+    typing();
+}
+
+function showQuote(i) {
+    typeText(quotes[i], document.getElementById("quote"));
+}
+
+function nextQuote() {
+    index = (index + 1) % quotes.length;
+    showQuote(index);
+}
+
+// ADD TO DATABASE
+async function addQuote() {
+    const input = document.getElementById("userQuote").value.trim();
+    if(!input) return;
+
+    await fetch('/add_quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: input })
+    });
+
+    quotes.push(input);
+    document.getElementById("userQuote").value = "";
+    alert("Saved globally!");
+}
+
+// INIT
+loadQuotes().then(() => showQuote(index));
+
+</script>
